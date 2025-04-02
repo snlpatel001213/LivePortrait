@@ -12,7 +12,6 @@ app = Flask(__name__)
 def index():
     return render_template('index.html')
 
-
 @app.route('/process_video', methods=['POST'])
 def process_video():
     data = request.get_json()
