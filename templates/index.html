@@ -34,7 +34,7 @@
             position: absolute;
             top: 0;
             right: 0;
-            width: 20%;
+            width: 10%;
             height: 100%;
             background-color: rgba(0, 0, 0, 0.5);
             padding: 10px;
@@ -54,7 +54,7 @@
             position: absolute;
             top: 0;
             left: -20%;
-            width: 20%;
+            width: 10%;
             height: 100%;
             background-color: rgba(0, 0, 0, 0.5);
             transition: left 0.3s ease;
@@ -72,18 +72,18 @@
             cursor: pointer;
             color: gold;
             text-shadow: 0 0 5px gold;
-            font-size: 2em; /* Increase arrow size */
+            font-size: 10em; /* Increase arrow size */
         }
         .sample-image {
             width: 100%;
-            margin-bottom: 10px;
+            margin-bottom: 20px;
             background-color: rgba(255, 255, 255, 0.1);
             padding: 5px;
             cursor: pointer;
         }
         #controls {
             position: absolute;
-            bottom: 20px;
+            bottom: 30px;
             width: 100%;
             text-align: center;
         }
@@ -120,13 +120,42 @@
         #output-container {
             display: none;
         }
+        #webcam-title {
+            position: absolute;
+            top: 5%;
+            left: 40%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 2em;
+            text-align: center;
+            z-index: 10;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+            transition: left 0.3s ease, transform 0.3s ease; /* Smooth transition */
+        }
+
+        #acknowledgement {
+            position: absolute;
+            bottom: 5px;
+            width: 100%;
+            text-align: center;
+            font-size: 10px;
+            color: white;
+            /* Adjust color as needed */
+        }
+        #drawer-panel.open + #webcam-title {
+            left: calc(50% + 10%); /* Adjust for drawer width */
+            transform: translate(-60%, -50%); /* Adjust transform */
+        }
     </style>
+
 </head>
 <body>
     <div class="full-screen" id="page-1">
         <video id="webcam-view" autoplay playsinline></video>
+        <div id="webcam-title">AI Live Portrait - Bring portraits to life! </div>
         <div id="video-selection">
             <video class="video-preview" data-path="d0.mp4" src="/static/driving/d0.mp4" controls muted loop></video>
+            <!-- <video class="video-preview" data-path="353477199-24086eea-7075-45ec-8eef-2a9344185746.mp4" src="/static/driving/353477199-24086eea-7075-45ec-8eef-2a9344185746.mp4" controls muted loop></video> -->
             <video class="video-preview" data-path="d3.mp4" src="/static/driving/d3.mp4" controls muted loop></video>
             <video class="video-preview" data-path="d6.mp4" src="/static/driving/d6.mp4" controls muted loop></video>
             <video class="video-preview" data-path="d9.mp4" src="/static/driving/d9.mp4" controls muted loop></video>
@@ -141,6 +170,7 @@
         </div>
         <div id="drawer-panel">
             <div class="sample-image" data-src="/static/source/s1.jpg"><img src="/static/source/s1.jpg" width="100%"></div>
+            <!-- <div class="sample-image" data-src="/static/source/350942769-25851766-a454-4f16-8d44-f63923cdabf2.jpg"><img src="/static/source/350942769-25851766-a454-4f16-8d44-f63923cdabf2.jpg" width="100%"></div> -->
             <div class="sample-image" data-src="/static/source/s2.jpg"><img src="/static/source/s2.jpg" width="100%"></div>
             <div class="sample-image" data-src="/static/source/s3.jpg"><img src="/static/source/s3.jpg" width="100%"></div>
             <div class="sample-image" data-src="/static/source/s4.jpg"><img src="/static/source/s4.jpg" width="100%"></div>
@@ -155,9 +185,12 @@
         </div>
         <div id="drawer-toggle">&#171;</div>
         <div id="controls">
-            <button class="btn btn-danger btn-sm" id="restart-btn">Restart</button>
+            <button class="btn btn-danger btn-lg" id="restart-btn">Restart</button>
             <button class="btn btn-primary btn-lg" id="capture-btn">Capture</button>
             <button class="btn btn-success btn-lg" id="submit-btn" style="display: none;">Submit</button>
+        </div>
+        <div id="acknowledgement">
+            LivePortrait: Efficient Portrait Animation with Stitching and Retargeting Control. Guo et al. CVPR 2024.
         </div>
     </div>
     <div class="full-screen" id="page-2" style="display: none;">
@@ -165,13 +198,14 @@
             <div id="output-play-button">&#9658;</div>
             <video id="output-video" controls playsinline></video>
         </div>
-        <div id="output-controls" style="position: absolute; bottom: 20px; width: 100%; text-align: center;">
+        <div id="output-controls" style="position: absolute; bottom: 50px; width: 100%; text-align: center;">
             <button class="btn btn-danger btn-lg" id="output-restart-btn">Restart</button>
         </div>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
     <script>
 
         let selectedVideoPath;
@@ -213,6 +247,7 @@
             $('#capture-btn').text('Choose a reference video from side panel');
             $('#capture-btn').prop('disabled', true);
             $('#submit-btn').show();
+            $('#submit-btn').prop('disabled', true);
         });
 
         $('#restart-btn, #output-restart-btn').click(function() {
@@ -244,6 +279,7 @@
 
         $('#drawer-toggle').click(function() {
             $('#drawer-panel').toggleClass('open');
+            updateTitlePosition(); // Update title position on toggle
         });
 
         $('.sample-image').click(function() {
@@ -254,6 +290,10 @@
             img.style.objectFit = 'cover';
             currentWebcamElement.replaceWith(img);
             currentWebcamElement = img;
+            $('#capture-btn').text('Choose a reference video from side panel');
+            $('#capture-btn').prop('disabled', true);
+            $('#submit-btn').show();
+            $('#submit-btn').prop('disabled', true);
         });
         $('.video-preview').click(function() {
             $('.video-preview').removeClass('selected');
@@ -271,7 +311,16 @@
                 return;
             }
 
-            $(this).text('Time lapse...');
+            let startTime = Date.now();
+            let $this = $(this); // Cache $(this) for use in setInterval
+
+            $this.text('Processing : 0s'); // Initial text
+
+            let intervalId = setInterval(function() {
+                let elapsedTime = Math.floor((Date.now() - startTime) / 1000); // Calculate elapsed time in seconds
+                $this.text('Processing : ' + elapsedTime + 's'); // Update text
+            }, 1000); // Update every 1 second
+
 
             const uuid = generateUUID(); // Generate a unique ID for this submission
 
@@ -296,9 +345,11 @@
                     uuid: uuid
                 }),
                 success: function(data) {
+                    clearInterval(intervalId); // Stop updating time
                     checkVideoStatus(uuid); // Start checking for video availability
                 },
                 error: function(error) {
+                    clearInterval(intervalId); // Stop updating time on error
                     console.error('Error processing video:', error);
                     $('#submit-btn').text('Submit');
                     alert("An error occurred during video processing.");
@@ -363,6 +414,36 @@
                     });
                 }, 2000);
             }
-        </script>
+
+
+        // ... (your existing JavaScript code) ...
+
+        const $drawerPanel = $('#drawer-panel');
+        const $webcamTitle = $('#webcam-title');
+
+        function updateTitlePosition() {
+            if ($drawerPanel.hasClass('open')) {
+                $webcamTitle.css({
+                    left: 'calc(45% + 10%)',
+                    transform: 'translate(-60%, -50%)'
+                });
+            } else {
+                $webcamTitle.css({
+                    left: '45%',
+                    transform: 'translate(-50%, -50%)'
+                });
+            }
+        }
+
+        // $('#drawer-toggle').click(function() {
+        //     $drawerPanel.toggleClass('open');
+        //     updateTitlePosition(); // Update title position on toggle
+        // });
+
+        updateTitlePosition(); // Initial position on page load
+
+        // ... (rest of your JavaScript code) ...
+
+    </script>
 </body>
 </html>
