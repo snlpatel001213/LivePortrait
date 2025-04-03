@@ -144,4 +144,4 @@ def serve_video(uuid_str):
     return send_from_directory(VIDEO_OUTPUT_DIR, f"{uuid_str}", mimetype='video/mp4')
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host="0.0.0.0", port=9898, ssl_context='adhoc')

@@ -152,7 +152,7 @@
 <body>
     <div class="full-screen" id="page-1">
         <video id="webcam-view" autoplay playsinline></video>
-        <div id="webcam-title">AI Live Portrait - Bring portraits to life! </div>
+        <div id="webcam-title" style="text-shadow: 5px 5px 8px #237c0e;">AI Live Portrait - Bring Portraits to Life! </div>
         <div id="video-selection">
             <video class="video-preview" data-path="d0.mp4" src="/static/driving/d0.mp4" controls muted loop></video>
             <!-- <video class="video-preview" data-path="353477199-24086eea-7075-45ec-8eef-2a9344185746.mp4" src="/static/driving/353477199-24086eea-7075-45ec-8eef-2a9344185746.mp4" controls muted loop></video> -->
@@ -227,6 +227,7 @@
                 currentWebcamElement = webcamVideo;
             })
             .catch(error => console.error('Error accessing webcam:', error));
+
 
         $('#capture-btn').click(function() {
             const canvas = document.createElement('canvas');
