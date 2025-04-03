@@ -7,7 +7,7 @@ from src.config.argument_config import ArgumentConfig
 from src.config.inference_config import InferenceConfig
 from src.config.crop_config import CropConfig
 from src.live_portrait_pipeline import LivePortraitPipeline
-
+import shutil
 VIDEO_OUTPUT_DIR = "animations"
 
 app = Flask(__name__)
@@ -81,20 +81,27 @@ def process_video():
     #     return jsonify({'status': 'error'})
 
 def save_input_data(image_data, video_path, uuid_str):
+    print("image_data", image_data)
     image_filename = os.path.join(VIDEO_OUTPUT_DIR, f"{uuid_str}_input.png")
     if "base64" in image_data:
         image_data = image_data.split(',')[1]
         with open(image_filename, "wb") as fh:
             fh.write(base64.b64decode(image_data))
     else:
-        import requests
-        img_data = requests.get(image_data).content
-        with open(image_filename, 'wb') as f:
-            f.write(img_data)
+        # import requests
+        # img_data = requests.get(image_data).content
+        # with open(image_filename, 'wb') as f:
+        #     f.write(img_data)
+        source_file_name = image_data.split('/')[-1]
+        image_data = os.path.join("/LivePortrait/static/source",source_file_name)
+        print("image_data 2", image_data)
+        shutil.copy(image_data, image_filename)
     # Save the video path chnages to the absolute path
     video_path = os.path.join("/LivePortrait/assets/examples/driving", video_path)
     with open(os.path.join(VIDEO_OUTPUT_DIR, f"{uuid_str}_video_path.txt"), "w") as f:
         f.write(video_path)
+
+
 
 def process_video_with_live_portrait(uuid_str, live_portrait_pipeline):
     """
