@@ -169,6 +169,8 @@
             <video class="video-preview" data-path="d20.mp4" src="/static/driving/d20.mp4" controls muted loop></video>
         </div>
         <div id="drawer-panel">
+            <div class="sample-image" data-src="/static/source/nm.jpg"><img src="/static/source/nm.jpg" width="100%"></div>
+            <div class="sample-image" data-src="/static/source/cc.jpg"><img src="/static/source/cc.jpg" width="100%"></div>
             <div class="sample-image" data-src="/static/source/s1.jpg"><img src="/static/source/s1.jpg" width="100%"></div>
             <!-- <div class="sample-image" data-src="/static/source/350942769-25851766-a454-4f16-8d44-f63923cdabf2.jpg"><img src="/static/source/350942769-25851766-a454-4f16-8d44-f63923cdabf2.jpg" width="100%"></div> -->
             <div class="sample-image" data-src="/static/source/s2.jpg"><img src="/static/source/s2.jpg" width="100%"></div>
@@ -286,9 +288,11 @@
         $('.sample-image').click(function() {
             const img = document.createElement('img');
             img.src = $(this).data('src');
-            img.style.width = '100%';
+            img.style.width = 'auto';
             img.style.height = '100%';
             img.style.objectFit = 'cover';
+            img.style.margin = 'auto';
+            img.style.display = 'block';
             currentWebcamElement.replaceWith(img);
             currentWebcamElement = img;
             $('#capture-btn').text('Choose a reference video from side panel');
