@@ -6,6 +6,9 @@
     <title>Elegant Video Processing Demo</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
+        .blinking {
+            background-color: rgb(255, 0, 0) !important;
+        }
         #captured-image {
             position: absolute;
             top: 0;
@@ -313,6 +316,23 @@
 
         });
 
+        let blinkInterval; // store interval ID globally
+
+        // Start blinking
+        function startBlink() {
+        $('#submit-btn').prop('disabled', true);
+        blinkInterval = setInterval(function() {
+            $('#submit-btn').toggleClass('blinking');
+        }, 500);
+        }
+
+        // Stop/reset blinking
+        function resetBlink() {
+        clearInterval(blinkInterval); // stop the interval
+        $('#submit-btn').removeClass('blinking'); // remove blink style
+        $('#submit-btn').prop('disabled', false); // enable if needed
+        }
+
         $('#submit-btn').click(function() {
 
             if (!selectedVideoPath) {
@@ -328,8 +348,14 @@
             let intervalId = setInterval(function() {
                 let elapsedTime = Math.floor((Date.now() - startTime) / 1000); // Calculate elapsed time in seconds
                 $this.text('Processing : ' + elapsedTime + 's'); // Update text
-            }, 1000); // Update every 1 second
+            }, 1000);
+
+
+
+            // Update every 1 second
             $('#submit-btn').prop('disabled', true);
+
+            startBlink(); // Start blinking
 
             const uuid = generateUUID(); // Generate a unique ID for this submission
 
@@ -356,6 +382,7 @@
                 success: function(data) {
                     clearInterval(intervalId); // Stop updating time
                     checkVideoStatus(uuid); // Start checking for video availability
+                    resetBlink(); // Stop blinking
                 },
                 error: function(error) {
                     clearInterval(intervalId); // Stop updating time on error
@@ -364,6 +391,7 @@
                     alert("An error occurred during video processing.");
                 }
             });
+
         });
 
         function generateUUID() {
