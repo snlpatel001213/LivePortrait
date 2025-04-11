@@ -278,6 +278,7 @@
             $('#capture-btn').text('Capture');
             $('#capture-btn').prop('disabled', false);
             $('#submit-btn').hide();
+            $('#capture-btn').show();
         });
 
         $('#drawer-toggle').click(function() {
@@ -306,11 +307,14 @@
             selectedVideoPath = $(this).data('path');
             console.log('Selected video path:', selectedVideoPath);
             $('#submit-btn').prop('disabled', false);
+            $('#capture-btn').hide();
+
         });
 
         });
 
         $('#submit-btn').click(function() {
+
             if (!selectedVideoPath) {
                 alert("Please select a reference video.");
                 return;
@@ -325,7 +329,7 @@
                 let elapsedTime = Math.floor((Date.now() - startTime) / 1000); // Calculate elapsed time in seconds
                 $this.text('Processing : ' + elapsedTime + 's'); // Update text
             }, 1000); // Update every 1 second
-
+            $('#submit-btn').prop('disabled', true);
 
             const uuid = generateUUID(); // Generate a unique ID for this submission
 
